@@ -1,0 +1,618 @@
+@HappyLunchBE_HostAddress = http://localhost:5264
+@token = your_token_here
+
+### ============================================
+### AUTHENTICATION APIs
+### ============================================
+
+### 1. Đăng ký tài khoản mới
+POST {{HappyLunchBE_HostAddress}}/api/AuthController/Register
+Content-Type: application/json
+
+{
+  "userLogin": "testuser",
+  "userEmail": "test@test.com",
+  "password": "Test123456",
+  "confirmPassword": "Test123456"
+}
+
+### 2. Xác nhận email (lấy code từ email hoặc database)
+POST {{HappyLunchBE_HostAddress}}/api/AuthController/VerifyEmail
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "code": "123456"
+}
+
+### 3. Đăng nhập
+POST {{HappyLunchBE_HostAddress}}/api/AuthController/Login
+Content-Type: application/json
+
+{
+  "userLogin": "testuser",
+  "password": "Test123456"
+}
+
+### 4. Đăng nhập với Google
+POST {{HappyLunchBE_HostAddress}}/api/AuthController/LoginWithGoogle
+Content-Type: application/json
+
+{
+  "idToken": "google_id_token_here"
+}
+
+### ============================================
+### USER APIs (Cần Authentication)
+### ============================================
+
+### 5. Lấy thông tin user hiện tại
+GET {{HappyLunchBE_HostAddress}}/api/UserController/GetOneUser
+Authorization: Bearer {{token}}
+
+### 6. Cập nhật profile
+PUT {{HappyLunchBE_HostAddress}}/api/UserController/UpdateMyProfile
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "userLogin": "newusername",
+  "displayName": "New Display Name"
+}
+
+### 7. Đổi mật khẩu
+PUT {{HappyLunchBE_HostAddress}}/api/UserController/UpdatePassword
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "oldPassword": "Test123456",
+  "newPassword": "NewPassword123",
+  "confirmPassword": "NewPassword123"
+}
+
+### 8. Lấy tất cả users (Admin only)
+GET {{HappyLunchBE_HostAddress}}/api/UserController/GetAllUsers
+Authorization: Bearer {{token}}
+
+### 9. Admin cập nhật user
+PUT {{HappyLunchBE_HostAddress}}/api/UserController/1/admin
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "userStatus": 1,
+  "role": "Admin"
+}
+
+### 10. Admin xóa user
+DELETE {{HappyLunchBE_HostAddress}}/api/UserController/1/admin
+Authorization: Bearer {{token}}
+
+### ============================================
+### PRODUCT APIs
+### ============================================
+
+### 11. Lấy danh sách sản phẩm (User)
+GET {{HappyLunchBE_HostAddress}}/api/ProductController/PublicProducts
+Authorization: Bearer {{token}}
+
+### 12. Lấy chi tiết sản phẩm (User)
+GET {{HappyLunchBE_HostAddress}}/api/ProductController/1/PublicDetail
+Authorization: Bearer {{token}}
+
+### 13. Lấy danh sách sản phẩm (Admin)
+GET {{HappyLunchBE_HostAddress}}/api/ProductController/AdminProducts
+Authorization: Bearer {{token}}
+
+### 14. Lấy chi tiết sản phẩm (Admin)
+GET {{HappyLunchBE_HostAddress}}/api/ProductController/1/AdminDetail
+Authorization: Bearer {{token}}
+
+### 15. Tạo sản phẩm mới (Admin)
+POST {{HappyLunchBE_HostAddress}}/api/ProductController/PostNewProduct
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Cơm trưa đặc biệt",
+  "description": "Cơm trưa ngon miệng",
+  "categoryId": 1,
+  "regularPrice": 50000,
+  "salePrice": 45000,
+  "stockStatus": "InStock",
+  "stockQuantity": 100
+}
+
+### 16. Cập nhật sản phẩm (Admin)
+PUT {{HappyLunchBE_HostAddress}}/api/ProductController/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Cơm trưa đặc biệt (Updated)",
+  "description": "Cơm trưa ngon miệng",
+  "categoryId": 1,
+  "regularPrice": 55000,
+  "salePrice": 50000,
+  "stockStatus": "InStock",
+  "stockQuantity": 150
+}
+
+### 17. Xóa sản phẩm (Admin)
+DELETE {{HappyLunchBE_HostAddress}}/api/ProductController/1
+Authorization: Bearer {{token}}
+
+### 18. Upload ảnh sản phẩm (Admin) - Sử dụng form-data trong Postman/Insomnia
+POST {{HappyLunchBE_HostAddress}}/api/ProductController/1/images
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="files"; filename="image.jpg"
+Content-Type: image/jpeg
+
+< ./image.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### 19. Xóa ảnh sản phẩm (Admin)
+DELETE {{HappyLunchBE_HostAddress}}/api/ProductController/images/1
+Authorization: Bearer {{token}}
+
+### 20. Đặt ảnh chính (Admin)
+PUT {{HappyLunchBE_HostAddress}}/api/ProductController/images/1/primary
+Authorization: Bearer {{token}}
+
+### ============================================
+### CART APIs (Cần Authentication)
+### ============================================
+
+### 21. Lấy giỏ hàng
+GET {{HappyLunchBE_HostAddress}}/api/CartController/GetCart
+Authorization: Bearer {{token}}
+
+### 22. Thêm sản phẩm vào giỏ hàng
+POST {{HappyLunchBE_HostAddress}}/api/CartController/AddItems
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "quantity": 2
+}
+
+### 23. Cập nhật số lượng sản phẩm trong giỏ hàng
+PUT {{HappyLunchBE_HostAddress}}/api/CartController/items/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "quantity": 3
+}
+
+### 24. Xóa sản phẩm khỏi giỏ hàng
+DELETE {{HappyLunchBE_HostAddress}}/api/CartController/items/1
+Authorization: Bearer {{token}}
+
+### 25. Xóa toàn bộ giỏ hàng
+DELETE {{HappyLunchBE_HostAddress}}/api/CartController/1
+Authorization: Bearer {{token}}
+
+### 26. Chọn/bỏ chọn sản phẩm trong giỏ hàng
+PATCH {{HappyLunchBE_HostAddress}}/api/CartController/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "isSelected": true
+}
+
+### ============================================
+### ORDER APIs (Cần Authentication)
+### ============================================
+
+### 27. Tạo đơn hàng mới
+POST {{HappyLunchBE_HostAddress}}/api/OrderController/CreateOrder
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "Nguyễn",
+  "lastName": "Văn A",
+  "phone": "0123456789",
+  "deliveryBranch": "HN",
+  "deliveryTimeCode": "LUNCH",
+  "note": "Giao hàng nhanh",
+  "paymentMethod": "COD"
+}
+
+### 28. Lấy danh sách đơn hàng của user
+GET {{HappyLunchBE_HostAddress}}/api/OrderController/MyOrders
+Authorization: Bearer {{token}}
+
+### 29. Lấy chi tiết đơn hàng
+GET {{HappyLunchBE_HostAddress}}/api/OrderController/1
+Authorization: Bearer {{token}}
+
+### ============================================
+### REVIEW APIs (Cần Authentication)
+### ============================================
+
+### 30. Lấy reviews của sản phẩm
+GET {{HappyLunchBE_HostAddress}}/api/ReviewController/1
+Authorization: Bearer {{token}}
+
+### 31. Tạo review mới
+POST {{HappyLunchBE_HostAddress}}/api/ReviewController/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "rating": 5,
+  "comment": "Sản phẩm rất ngon!"
+}
+
+### 32. Cập nhật review
+PUT {{HappyLunchBE_HostAddress}}/api/ReviewController/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "rating": 4,
+  "comment": "Sản phẩm tốt, nhưng có thể cải thiện thêm"
+}
+
+### 33. Xóa review
+DELETE {{HappyLunchBE_HostAddress}}/api/ReviewController/1
+Authorization: Bearer {{token}}
+
+### ============================================
+### VNPAY APIs
+### ============================================
+
+### 34. Tạo URL thanh toán VNPay
+POST {{HappyLunchBE_HostAddress}}/api/VNPayController/CreatePaymentUrl
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "orderId": 1,
+  "amount": 100000
+}
+
+### 35. Callback từ VNPay
+GET {{HappyLunchBE_HostAddress}}/api/VNPayController/Callback?vnp_Amount=10000000&vnp_BankCode=NCB&vnp_CardType=ATM&vnp_OrderInfo=test&vnp_PayDate=20231201120000&vnp_ResponseCode=00&vnp_TmnCode=09GGIKAD&vnp_TransactionNo=12345678&vnp_TransactionStatus=00&vnp_TxnRef=1&vnp_SecureHash=hash_here
+
+### ============================================
+### ADMIN ORDER APIs
+### ============================================
+
+### 36. Lấy tất cả đơn hàng (Admin)
+GET {{HappyLunchBE_HostAddress}}/api/AdminOrderController/GetAllOrders
+Authorization: Bearer {{token}}
+
+### 37. Cập nhật trạng thái đơn hàng (Admin)
+PUT {{HappyLunchBE_HostAddress}}/api/AdminOrderController/1/status
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "CONFIRMED"
+}
+
+### ============================================
+### TEST APIs
+### ============================================
+
+### 38. Test Weather Forecast (Không cần auth)
+GET {{HappyLunchBE_HostAddress}}/weatherforecast
+Accept: application/json
+
+### 39. Test Swagger
+GET {{HappyLunchBE_HostAddress}}/swagger/index.html
+
+### 1. Đăng ký tài khoản mới
+POST {{HappyLunchBE_HostAddress}}/api/AuthController/Register
+Content-Type: application/json
+
+{
+  "userLogin": "testuser",
+  "userEmail": "test@test.com",
+  "password": "Test123456",
+  "confirmPassword": "Test123456"
+}
+
+### 2. Xác nhận email (lấy code từ email hoặc database)
+POST {{HappyLunchBE_HostAddress}}/api/AuthController/VerifyEmail
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "code": "123456"
+}
+
+### 3. Đăng nhập
+POST {{HappyLunchBE_HostAddress}}/api/AuthController/Login
+Content-Type: application/json
+
+{
+  "userLogin": "testuser",
+  "password": "Test123456"
+}
+
+### 4. Đăng nhập với Google
+POST {{HappyLunchBE_HostAddress}}/api/AuthController/LoginWithGoogle
+Content-Type: application/json
+
+{
+  "idToken": "google_id_token_here"
+}
+
+### ============================================
+### USER APIs (Cần Authentication)
+### ============================================
+
+### 5. Lấy thông tin user hiện tại
+GET {{HappyLunchBE_HostAddress}}/api/UserController/GetOneUser
+Authorization: Bearer {{token}}
+
+### 6. Cập nhật profile
+PUT {{HappyLunchBE_HostAddress}}/api/UserController/UpdateMyProfile
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "userLogin": "newusername",
+  "displayName": "New Display Name"
+}
+
+### 7. Đổi mật khẩu
+PUT {{HappyLunchBE_HostAddress}}/api/UserController/UpdatePassword
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "oldPassword": "Test123456",
+  "newPassword": "NewPassword123",
+  "confirmPassword": "NewPassword123"
+}
+
+### 8. Lấy tất cả users (Admin only)
+GET {{HappyLunchBE_HostAddress}}/api/UserController/GetAllUsers
+Authorization: Bearer {{token}}
+
+### 9. Admin cập nhật user
+PUT {{HappyLunchBE_HostAddress}}/api/UserController/1/admin
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "userStatus": 1,
+  "role": "Admin"
+}
+
+### 10. Admin xóa user
+DELETE {{HappyLunchBE_HostAddress}}/api/UserController/1/admin
+Authorization: Bearer {{token}}
+
+### ============================================
+### PRODUCT APIs
+### ============================================
+
+### 11. Lấy danh sách sản phẩm (User)
+GET {{HappyLunchBE_HostAddress}}/api/ProductController/PublicProducts
+Authorization: Bearer {{token}}
+
+### 12. Lấy chi tiết sản phẩm (User)
+GET {{HappyLunchBE_HostAddress}}/api/ProductController/1/PublicDetail
+Authorization: Bearer {{token}}
+
+### 13. Lấy danh sách sản phẩm (Admin)
+GET {{HappyLunchBE_HostAddress}}/api/ProductController/AdminProducts
+Authorization: Bearer {{token}}
+
+### 14. Lấy chi tiết sản phẩm (Admin)
+GET {{HappyLunchBE_HostAddress}}/api/ProductController/1/AdminDetail
+Authorization: Bearer {{token}}
+
+### 15. Tạo sản phẩm mới (Admin)
+POST {{HappyLunchBE_HostAddress}}/api/ProductController/PostNewProduct
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Cơm trưa đặc biệt",
+  "description": "Cơm trưa ngon miệng",
+  "categoryId": 1,
+  "regularPrice": 50000,
+  "salePrice": 45000,
+  "stockStatus": "InStock",
+  "stockQuantity": 100
+}
+
+### 16. Cập nhật sản phẩm (Admin)
+PUT {{HappyLunchBE_HostAddress}}/api/ProductController/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Cơm trưa đặc biệt (Updated)",
+  "description": "Cơm trưa ngon miệng",
+  "categoryId": 1,
+  "regularPrice": 55000,
+  "salePrice": 50000,
+  "stockStatus": "InStock",
+  "stockQuantity": 150
+}
+
+### 17. Xóa sản phẩm (Admin)
+DELETE {{HappyLunchBE_HostAddress}}/api/ProductController/1
+Authorization: Bearer {{token}}
+
+### 18. Upload ảnh sản phẩm (Admin) - Sử dụng form-data trong Postman/Insomnia
+POST {{HappyLunchBE_HostAddress}}/api/ProductController/1/images
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="files"; filename="image.jpg"
+Content-Type: image/jpeg
+
+< ./image.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### 19. Xóa ảnh sản phẩm (Admin)
+DELETE {{HappyLunchBE_HostAddress}}/api/ProductController/images/1
+Authorization: Bearer {{token}}
+
+### 20. Đặt ảnh chính (Admin)
+PUT {{HappyLunchBE_HostAddress}}/api/ProductController/images/1/primary
+Authorization: Bearer {{token}}
+
+### ============================================
+### CART APIs (Cần Authentication)
+### ============================================
+
+### 21. Lấy giỏ hàng
+GET {{HappyLunchBE_HostAddress}}/api/CartController/GetCart
+Authorization: Bearer {{token}}
+
+### 22. Thêm sản phẩm vào giỏ hàng
+POST {{HappyLunchBE_HostAddress}}/api/CartController/AddItems
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "quantity": 2
+}
+
+### 23. Cập nhật số lượng sản phẩm trong giỏ hàng
+PUT {{HappyLunchBE_HostAddress}}/api/CartController/items/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "quantity": 3
+}
+
+### 24. Xóa sản phẩm khỏi giỏ hàng
+DELETE {{HappyLunchBE_HostAddress}}/api/CartController/items/1
+Authorization: Bearer {{token}}
+
+### 25. Xóa toàn bộ giỏ hàng
+DELETE {{HappyLunchBE_HostAddress}}/api/CartController/1
+Authorization: Bearer {{token}}
+
+### 26. Chọn/bỏ chọn sản phẩm trong giỏ hàng
+PATCH {{HappyLunchBE_HostAddress}}/api/CartController/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "isSelected": true
+}
+
+### ============================================
+### ORDER APIs (Cần Authentication)
+### ============================================
+
+### 27. Tạo đơn hàng mới
+POST {{HappyLunchBE_HostAddress}}/api/OrderController/CreateOrder
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "Nguyễn",
+  "lastName": "Văn A",
+  "phone": "0123456789",
+  "deliveryBranch": "HN",
+  "deliveryTimeCode": "LUNCH",
+  "note": "Giao hàng nhanh",
+  "paymentMethod": "COD"
+}
+
+### 28. Lấy danh sách đơn hàng của user
+GET {{HappyLunchBE_HostAddress}}/api/OrderController/MyOrders
+Authorization: Bearer {{token}}
+
+### 29. Lấy chi tiết đơn hàng
+GET {{HappyLunchBE_HostAddress}}/api/OrderController/1
+Authorization: Bearer {{token}}
+
+### ============================================
+### REVIEW APIs (Cần Authentication)
+### ============================================
+
+### 30. Lấy reviews của sản phẩm
+GET {{HappyLunchBE_HostAddress}}/api/ReviewController/1
+Authorization: Bearer {{token}}
+
+### 31. Tạo review mới
+POST {{HappyLunchBE_HostAddress}}/api/ReviewController/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "rating": 5,
+  "comment": "Sản phẩm rất ngon!"
+}
+
+### 32. Cập nhật review
+PUT {{HappyLunchBE_HostAddress}}/api/ReviewController/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "rating": 4,
+  "comment": "Sản phẩm tốt, nhưng có thể cải thiện thêm"
+}
+
+### 33. Xóa review
+DELETE {{HappyLunchBE_HostAddress}}/api/ReviewController/1
+Authorization: Bearer {{token}}
+
+### ============================================
+### VNPAY APIs
+### ============================================
+
+### 34. Tạo URL thanh toán VNPay
+POST {{HappyLunchBE_HostAddress}}/api/VNPayController/CreatePaymentUrl
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "orderId": 1,
+  "amount": 100000
+}
+
+### 35. Callback từ VNPay
+GET {{HappyLunchBE_HostAddress}}/api/VNPayController/Callback?vnp_Amount=10000000&vnp_BankCode=NCB&vnp_CardType=ATM&vnp_OrderInfo=test&vnp_PayDate=20231201120000&vnp_ResponseCode=00&vnp_TmnCode=09GGIKAD&vnp_TransactionNo=12345678&vnp_TransactionStatus=00&vnp_TxnRef=1&vnp_SecureHash=hash_here
+
+### ============================================
+### ADMIN ORDER APIs
+### ============================================
+
+### 36. Lấy tất cả đơn hàng (Admin)
+GET {{HappyLunchBE_HostAddress}}/api/AdminOrderController/GetAllOrders
+Authorization: Bearer {{token}}
+
+### 37. Cập nhật trạng thái đơn hàng (Admin)
+PUT {{HappyLunchBE_HostAddress}}/api/AdminOrderController/1/status
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "CONFIRMED"
+}
+
+### ============================================
+### TEST APIs
+### ============================================
+
+### 38. Test Weather Forecast (Không cần auth)
+GET {{HappyLunchBE_HostAddress}}/weatherforecast
+Accept: application/json
+
+### 39. Test Swagger
+GET {{HappyLunchBE_HostAddress}}/swagger/index.html
